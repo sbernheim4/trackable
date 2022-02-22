@@ -1,12 +1,17 @@
+/**
+ * The data available in an analytics event payload.
+ */
 type AnalyticsEvents = {
 	functionName: string;
 	arguments: Array<unknown>
 	info: any
+	value: unknown
 };
 
 /**
- * A trackable class. Useful for functions whose invocation should be known by
- * an external source or entity.
+ * A Trackable class. Useful for functions whose invocation should be known by
+ * an external source or entity. Those functions should return an instance of
+ * this class that can be passed around to other functions.
  */
 class Trackable<Value>{
 
@@ -14,9 +19,10 @@ class Trackable<Value>{
 	private analyticsEvents: Array<AnalyticsEvents>
 
 	/**
-	 * Construct an instance of a trackable
+	 * Construct an instance of a trackable.
 	 *
-	 * Prefer using the static `of` method. This constructor is private
+	 * Prefer using the static `of` method. This constructor
+	 * is private.
 	 */
 	private constructor(
 		value: Value,
@@ -32,21 +38,24 @@ class Trackable<Value>{
 	}
 
 	/**
-	 * Retrieve the underlying value of the Trackable instance
+	 * Retrieve the underlying value of the Trackable
+	 * instance.
 	 */
 	getValue() {
 		return this.value;
 	}
 
 	/**
-	 * Retrieve the analytics events that have been built up
+	 * Retrieve the analytics events that have been built
+	 * up.
 	 */
 	getAnalyticsEvents() {
 		return this.analyticsEvents;
 	}
 
 	/**
-	 * Determine if the underlying instance contains a value
+	 * Determine if the underlying instance contains a
+	 * value.
 	 */
 	private containsValue() {
 		return !!this.getValue();
@@ -54,7 +63,7 @@ class Trackable<Value>{
 
 	/**
 	 * Return a stringified version of the Trackble instance suitable for
-	 * logging
+	 * logging.
 	 */
 	toString() {
 		return `
@@ -67,14 +76,14 @@ analyticsEvents: ${this.getAnalyticsEvents()}
 	 * Return a stringified version of the Trackble instance suitable for
 	 * logging.
 	 *
-	 * An alias for toString
+	 * An alias for toString.
 	 */
 	toStr() {
 		return this.toString();
 	}
 
 	/**
-	 * Log a stringified version of the instance
+	 * Log a stringified version of the instance.
 	 */
 	log() {
 		console.log(this.toStr());
@@ -82,7 +91,7 @@ analyticsEvents: ${this.getAnalyticsEvents()}
 
 	/**
 	 * Log a stringified version of the instance returning the instance for
-	 * continued method calls
+	 * continued method calls.
 	 */
 	logAndContinue() {
 		console.log(this.toStr());
@@ -90,15 +99,14 @@ analyticsEvents: ${this.getAnalyticsEvents()}
 		return this;
 	}
 
-	// Monadic Methods
-
 	/**
 	 * The monadic map method.
 	 *
 	 * Continue to transform the underlying value while preserving any built up
 	 * trackable events.
 	 *
-	 * Use when the function passed to this method returns a non Trackable value
+	 * Use when the function passed to this method returns a non Trackable
+	 * value.
 	 */
 	map<A>(transformationFunction: (val: Value) => A): Trackable<Value | A> {
 
@@ -126,7 +134,7 @@ analyticsEvents: ${this.getAnalyticsEvents()}
 	 * Continue to transform the underlying value while preserving any built up
 	 * track events.
 	 *
-	 * Use when the function passed to this method returns a Trackable instance
+	 * Use when the function passed to this method returns a Trackable instance.
 	 */
 	flatMap<A>(fn: (val: Value) => Trackable<A>): Trackable<Value | A> {
 
@@ -173,7 +181,7 @@ analyticsEvents: ${this.getAnalyticsEvents()}
 	/**
 	 * Construct and return a Trackable instance.
 	 *
-	 * Prefer over using the new keyword
+	 * Prefer over using the new keyword.
 	 */
 	static of<Value>(value: Value, analyticsEvents: Array<AnalyticsEvents>) {
 
