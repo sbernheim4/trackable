@@ -40,7 +40,8 @@ const multiplyBy5AndRandom = (val: number) => {
 
 const res = addThreeAndRandom(5)
 	.flatMap(multiplyBy5AndRandom)
-	.map((x: number) => x.toString())
+	.map(x => x + 2)
+	.flatMap(addThreeAndRandom)
 	.run(trackingFunction);
 
 console.log(typeof res);
