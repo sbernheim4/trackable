@@ -1,32 +1,23 @@
 {
-  "include": ["./index.ts"],
+  "include": [
+	  "./src",
+	  "./examples"
+  ],
   "exclude": [],
   "compilerOptions": {
-
-    "incremental": true,
-    "composite": true,
-    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",
-    "disableSourceOfProjectReferenceRedirect": true,
-    "disableSolutionSearching": true,
-    "disableReferencedProjectLoad": true,
-
-    "target": "ES5",
-    "lib": ["ESNext", "DOM"],
-    "jsx": "preserve",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "jsxFactory": "",
-    "jsxFragmentFactory": "",
-    "jsxImportSource": "",
-    "reactNamespace": "",
-    "noLib": false,
-    "useDefineForClassFields": true,
+    "target": "ES6",
+    "lib": [
+		"ESNext",
+		"DOM"
+    ],
 
     "module": "commonjs",
     "rootDir": "./",
     "moduleResolution": "node",
     "baseUrl": "./",
-    "paths": {},
+    "paths": {
+      "tslib" : ["./node_modules/tslib/tslib.d.ts"]
+    },
     "rootDirs": [],
     "typeRoots": [],
     "types": [],
@@ -34,30 +25,15 @@
     "resolveJsonModule": true,
     "noResolve": true,
 
-    "allowJs": true,
-    "checkJs": true,
-    "maxNodeModuleJsDepth": 1,
+    "allowJs": false,
 
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
+    "declarationMap": false,
     "emitDeclarationOnly": false,
     "sourceMap": false,
     "outDir": "./dist",
     "removeComments": true,
     "noEmit": false,
-    "importHelpers": true,
-    "importsNotUsedAsValues": "remove",
-    "downlevelIteration": true,
-    "sourceRoot": "",
-    "mapRoot": "",
-    "inlineSourceMap": true,
-    "inlineSources": true,
-    "emitBOM": true,
-    "newLine": "crlf",
-    "stripInternal": true,
-    "noEmitHelpers": true,
-    "noEmitOnError": true,
-    "preserveConstEnums": true,
 
     "isolatedModules": false,
     "allowSyntheticDefaultImports": true,
