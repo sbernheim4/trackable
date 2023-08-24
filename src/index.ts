@@ -1,9 +1,12 @@
 export type AnalyticsEvent = {
 	caller?: string;
-	input?: Array<unknown>;
+	input?: unknown;
 	currentValue?: unknown,
 	[key: string]: unknown,
 };
+
+type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
+
 
 type TrackingFunction<AnalyticsEvent> = (event: AnalyticsEvent[]) => void;
 type TrackingFunctionAsync<AnalyticsEvent> = (event: AnalyticsEvent[]) => Promise<void>;
@@ -26,7 +29,7 @@ export class Trackable<Value>{
 	 */
 	private constructor(
 		value: Value,
-		analyticsEvents: AnalyticsEvent | Array<AnalyticsEvent>
+		analyticsEvents: WithRequired<AnalyticsEvent, 'currentValue'> | Array<WithRequired<AnalyticsEvent, 'currentValue'>>
 	) {
 		this.value = value;
 
@@ -120,7 +123,7 @@ export class Trackable<Value>{
 			},
 		];
 
-		const newTrackable = Trackable.of(
+		const newTrackable = Trackable.privateOf(
 			newUnderlyingValue,
 			// @ts-ignore
 			mergedAnalyticsEvents
@@ -155,7 +158,7 @@ export class Trackable<Value>{
 			},
 		];
 
-		const newTrackable = Trackable.of(
+		const newTrackable = Trackable.privateOf(
 			newUnderlyingValue,
 			// @ts-ignore
 			mergedAnalyticsEvents
@@ -190,6 +193,26 @@ export class Trackable<Value>{
 
 	}
 
+	private static privateOf<Value>(
+		value: Value,
+		analyticsEvents: Array<WithRequired<AnalyticsEvent, 'currentValue'>>
+	) {
+
+		const providedInfo = {
+			currentValue: value,
+		} satisfies WithRequired<AnalyticsEvent, 'currentValue'>;
+
+		const analyticsEventsToPass = [
+			...analyticsEvents,
+			providedInfo
+		].slice(0, -1);
+
+		const trackableInstance = new Trackable(value, analyticsEventsToPass);
+
+		return trackableInstance;
+
+	}
+
 	/**
 	 * Construct and return a Trackable instance.
 	 *
@@ -197,38 +220,21 @@ export class Trackable<Value>{
 	 */
 	static of<Value>(
 		value: Value,
-		analyticsEvents: AnalyticsEvent | Array<AnalyticsEvent>
+		analyticsEvents: AnalyticsEvent,
 	) {
-		
+
 		const providedInfo = {
 			currentValue: value,
 		};
 
-		if (Array.isArray(analyticsEvents)) {
+		const analyticsEventsToPass = {
+			...analyticsEvents,
+			...providedInfo,
+		} satisfies WithRequired<AnalyticsEvent, 'currentValue'>;
 
-			const analyticsEventsToPass = [
-				...analyticsEvents,
-				providedInfo
-			].slice(0, -1);
+		const trackableInstance = new Trackable(value, analyticsEventsToPass);
 
-			const trackableInstance = new Trackable(value, analyticsEventsToPass);
-
-			return trackableInstance;
-
-		} else {
-
-			const analyticsEventsToPass: AnalyticsEvent & Partial<AnalyticsEvent> = {
-				...analyticsEvents,
-				...providedInfo,
-			}
-
-			const trackableInstance = new Trackable(value, analyticsEventsToPass);
-
-			return trackableInstance;
-
-		}
-
-
+		return trackableInstance;
 
 	}
 

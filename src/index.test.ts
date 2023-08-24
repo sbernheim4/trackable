@@ -1,5 +1,4 @@
 import { describe, it, expect, vi } from 'vitest';
-import util from 'util';
 import { Trackable } from './../src';
 
 describe("Trackable", () => {
@@ -32,7 +31,7 @@ describe("Trackable", () => {
 
 		const addTwo = (x: number) => x + 2;
 
-		it("should support map, flatMap, and carry events to the tracking function", () => {
+		it("there are 3 events when there are 3 functions invoked for a trackable", () => {
 
 			const trackingFunction = vi.fn();
 
