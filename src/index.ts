@@ -1,25 +1,21 @@
-/**
- * The data available in an analytics event payload.
- */
-export type AnalyticsEvents = {
-	functionName: string;
-	arguments: Array<unknown>
-	info: any
-	value: unknown
+export type ProvidedAnalyticsInfo<T> = {
+	caller?: string;
+	arguments: Array<unknown>;
+	value: T,
 };
 
-type TrackingFunction = <T>(event: AnalyticsEvents) => void | T;
-type TrackingFunctionAsync = <T>(event: AnalyticsEvents) => Promise<T | void>;
+type TrackingFunction<AnalyticsEvent> = (event: AnalyticsEvent[]) => void;
+type TrackingFunctionAsync<AnalyticsEvent> = (event: AnalyticsEvent[]) => Promise<void>;
 
 /**
  * A Trackable class. Useful for functions whose invocation should be known by
  * an external source or entity. Those functions should return an instance of
  * this class that can be passed around to other functions.
  */
-export class Trackable<Value>{
+export class Trackable<Value, AnalyticsEvent>{
 
 	private value: Value;
-	private analyticsEvents: Array<AnalyticsEvents>
+	private analyticsEvents: Array<AnalyticsEvent>
 
 	/**
 	 * Construct an instance of a trackable.
@@ -29,7 +25,7 @@ export class Trackable<Value>{
 	 */
 	private constructor(
 		value: Value,
-		analyticsEvents: AnalyticsEvents | Array<AnalyticsEvents>
+		analyticsEvents: AnalyticsEvent | Array<AnalyticsEvent>
 	) {
 		this.value = value;
 
@@ -109,13 +105,26 @@ export class Trackable<Value>{
 	 * Use when the function passed to this method returns a non Trackable
 	 * value.
 	 */
-	map<A>(transformationFunction: (val: Value) => A): Trackable<A> {
+	map<A>(transformationFunction: (val: Value) => A): Trackable<A, AnalyticsEvent> {
 
 		const transformedValue = transformationFunction(this.getValue());
 
+		const existingAnalyticsEvents = this.getAnalyticsEvents();
+
+		const newAnalyticsEvent: AnalyticsEvent = {
+			caller: transformationFunction.name ?? 'anonymous',
+			arguments: [this.getValue()],
+			value: transformedValue,
+		};
+
+		const analyticsEvents: AnalyticsEvent[] = [
+			...existingAnalyticsEvents,
+			newAnalyticsEvent,
+		];
+
 		const newTrackable = Trackable.of(
 			transformedValue,
-			this.getAnalyticsEvents()
+			analyticsEvents
 		);
 
 		return newTrackable;
@@ -130,15 +139,20 @@ export class Trackable<Value>{
 	 *
 	 * Use when the function passed to this method returns a Trackable instance.
 	 */
-	flatMap<A>(fn: (val: Value) => Trackable<A>): Trackable<A> {
+	flatMap<A>(transformationFunction: (val: Value) => Trackable<A, AnalyticsEvent>): Trackable<A, AnalyticsEvent> {
 
-		const newTrackableInstance = fn(this.getValue());
+		const newTrackableInstance = transformationFunction(this.getValue());
 
 		const newUnderlyingValue = newTrackableInstance.getValue();
 
 		const mergedTrackingData = [
 			...this.getAnalyticsEvents(),
-			...newTrackableInstance.getAnalyticsEvents()
+			{
+				...newTrackableInstance.getAnalyticsEvents()[0],
+				caller: transformationFunction.name,
+				arguments: [this.getValue()],
+				value: newUnderlyingValue,
+			},
 		];
 
 		const newTrackable = Trackable.of(
@@ -146,6 +160,7 @@ export class Trackable<Value>{
 			mergedTrackingData
 		);
 
+		// @ts-ignore
 		return newTrackable;
 
 	}
@@ -155,22 +170,20 @@ export class Trackable<Value>{
 	 * events.
 	 */
 	run(
-		trackingFunction: TrackingFunction
+		trackingFunction: TrackingFunction<AnalyticsEvent>
 	) {
 		const events = this.getAnalyticsEvents();
 
-		events.map(trackingFunction);
+		trackingFunction(events);
 
 		return this.getValue();
 
 	}
 
-	async runAsync(trackingFunction: TrackingFunctionAsync) {
+	async runAsync(trackingFunction: TrackingFunctionAsync<AnalyticsEvent>) {
 		const events = this.getAnalyticsEvents();
 
-		const promises = events.map(trackingFunction);
-
-		await Promise.all(promises);
+		await trackingFunction(events);
 
 		return this.getValue();
 
@@ -181,12 +194,12 @@ export class Trackable<Value>{
 	 *
 	 * Prefer over using the new keyword.
 	 */
-	static of<Value>(
+	static of<Value, AnalyticsEvent>(
 		value: Value,
-		analyticsEvents: AnalyticsEvents | Array<AnalyticsEvents>
+		analyticsEvents?: AnalyticsEvent | Array<AnalyticsEvent>
 	) {
 
-		const trackableInstance = new Trackable(value, analyticsEvents);
+		const trackableInstance = new Trackable(value, analyticsEvents ?? []);
 
 		return trackableInstance;
 
