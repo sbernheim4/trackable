@@ -1,67 +1,53 @@
 {
-  "include": [
-	  "./src",
-	  "./examples"
-  ],
-  "exclude": [],
-  "compilerOptions": {
-    "target": "ES6",
-    "lib": [
-		"ESNext",
-		"DOM"
-    ],
-
-    "module": "commonjs",
-    "rootDir": "./",
-    "moduleResolution": "node",
-    "baseUrl": "./",
-    "paths": {
-      "tslib" : ["./node_modules/tslib/tslib.d.ts"]
-    },
-    "rootDirs": [],
-    "typeRoots": [],
-    "types": [],
-    "allowUmdGlobalAccess": true,
-    "resolveJsonModule": true,
-    "noResolve": true,
-
-    "allowJs": false,
-
-    "declaration": false,
-    "declarationMap": false,
-    "emitDeclarationOnly": false,
-    "sourceMap": false,
-    "outDir": "./dist",
-    "removeComments": true,
-    "noEmit": false,
-
-    "isolatedModules": false,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "preserveSymlinks": true,
-    "forceConsistentCasingInFileNames": true,
-
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "useUnknownInCatchVariables": true,
-    "alwaysStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "allowUnusedLabels": false,
-    "allowUnreachableCode": false,
-
-    "skipDefaultLibCheck": true,
-    "skipLibCheck": true
-  }
+	"include": [
+		"./src"
+	],
+	"exclude": [],
+	"compilerOptions": {
+		"target": "ES6",
+		"module": "ESNext",
+		"rootDir": "./",
+		"moduleResolution": "node",
+		"baseUrl": "./",
+		"paths": {},
+		"rootDirs": [],
+		"typeRoots": [],
+		"types": [],
+		"allowUmdGlobalAccess": true,
+		"resolveJsonModule": true,
+		"allowJs": false,
+		"declaration": false,
+		"declarationMap": false,
+		"emitDeclarationOnly": false,
+		"sourceMap": false,
+		"outDir": "./dist",
+		"removeComments": true,
+		"noEmit": false,
+		"isolatedModules": false,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"preserveSymlinks": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"strictPropertyInitialization": true,
+		"noImplicitThis": true,
+		"useUnknownInCatchVariables": true,
+		"alwaysStrict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"exactOptionalPropertyTypes": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"allowUnusedLabels": false,
+		"allowUnreachableCode": false,
+		"skipDefaultLibCheck": true,
+		"skipLibCheck": true
+	}
 }
